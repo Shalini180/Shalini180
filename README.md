@@ -9,6 +9,6 @@
 - 👨‍💻 I’m currently working on Blockchain,data analysis and data visualization
 - 📚 I’m currently learning everything about Frontend, Backend technologies and blockchain 😅
 - 💪🏼 Future Goals: Learn more technologies - Never stop creating new ideas.
-- ⚡ Fun fact: I love to watch cricket 🎱.
+- ⚡ Fun fact: I love watching cricket 🎱.
 
 ---
