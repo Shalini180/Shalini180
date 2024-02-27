@@ -13,7 +13,7 @@
 
 - **Standard Chartered GBS**
   - *Software Developer*
-    - Collaboratively migrated three database views to PL/SQL procedures leveraging file feed processing, resolving a 10% failure rate caused by view data inefficiencies, while achieving significant performance improvements, schema-independent data processing, and advanced logic for tailored transformations.
+    - Collaboratively migrated database views to PL/SQL procedures leveraging file feed processing, resolving a 10% failure rate caused by view data inefficiencies, while achieving significant performance improvements, schema-independent data processing, and advanced logic for tailored transformations.
     - Streamlined daily data processing with PL/SQL procedures, empowering actionable insights and ensuring seamless business operations.
 
 - **Amazon India**
