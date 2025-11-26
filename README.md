@@ -1,57 +1,81 @@
 # Hi, I'm Shalini 👋
 
-### Backend Engineer · Distributed Systems & ML
-I am a Backend Engineer building infrastructure for large-scale applications.
+### Backend Engineer · Systems & ML
+I am a Backend Engineer in fintech building high-reliability infrastructure.
 
-My research interests lie in **operationalizing uncertainty in distributed systems**. I build systems that accept stochastic signals—such as carbon forecasts, LLM token probabilities, and noisy sensor readings—and convert them into deterministic, reliable scheduling decisions.
+My work has shifted from building **deterministic systems** (that assume perfect inputs) to **robust systems** (that survive noisy ones). I am motivated by infrastructure that fails quietly: schedulers that trust bad forecasts and developer tools that surface hallucinations without verification.
 
-Currently, I bridge the gap between **System Reliability** (determinism) and **Machine Learning** (probability) by designing schedulers and pipelines that treat risk as a first-class citizen.
+My goal for graduate study is to formalize how distributed systems can quantify risk to make better resource allocation decisions under uncertainty.
 
 ---
 
-### 🔬 Research Focus & Implementation
+### 📄 Academic Research (Foundational)
+**Learning-Based Adaptive Image Denoising**
+<br>*Undergraduate Capstone Thesis | Vellore Institute of Technology*
+
+* **The Problem:** Traditional denoising applies a single algorithm globally. I investigated whether local image complexity could serve as a proxy for “uncertainty” when dynamically selecting filters.
+* **Methodology:**
+    * Modeled image patches using a **6-factor complexity vector** (quantifying spatial variance and spectral density).
+    * Trained a Random Forest classifier to map patch complexity to the optimal denoising kernel (BM3D vs. Bilateral vs. NLM).
+* **Empirical Analysis:** The model approached an oracle-style baseline (93% agreement), with modest PSNR improvements (0.33–0.56 dB). *Crucially, the system's failure under non-stationary sensor noise highlighted the limitation of static complexity features, motivating my interest in adaptive systems that model distributional shift.*
+
+---
+
+### 🛠️ Systems Engineering Prototypes (Research-Inspired)
+*Self-directed implementations exploring reliability under uncertainty.*
 
 #### 1. [Carbon-Aware SQL Execution Engine](https://github.com/Shalini180/energy-ml-project)
-* **Research Problem:** Standard schedulers optimize for latency/throughput but treat environmental cost as a constant, failing to account for forecast error in grid carbon intensity.
-* **Uncertainty Mechanism:** Modeled **forecast variance** (aleatoric uncertainty) using time-dependent prediction intervals (expected value plus/minus one standard deviation). Implemented a conservative lower-bound selector to defer jobs only when the *worst-case* future carbon is strictly better than current conditions.
-* **Systems Complexity:**
-    * **Concurrency:** Handled queue saturation via Celery backpressure mechanisms.
-    * **Profiling:** Implemented statistical energy profiling (N=5 runs) to distinguish signal from OS noise, falling back to TDP estimation when RAPL hardware counters are unavailable.
-* **Evaluation:** Reduced carbon footprint by **~15%** compared to a greedy scheduler on a **24-hour replay of real grid traces and synthetic OLAP jobs**.
+* **Objective:** To build a job scheduler that handles uncertainty in grid carbon intensity forecasts.
+* **Mechanism:** Calculated a **prediction interval** ($E \pm \sigma$) for carbon intensity. Implemented a lower-bound heuristic to defer jobs only when the future scenario was conservatively estimated to be cleaner.
+* **Simulation Result:** In a **simulated replay** of ISO-NE grid traces (~200 synthetic jobs), the scheduler reduced estimated carbon footprint by **~15%** compared to a FIFO baseline.
+* **Research Insight:** *This architecture revealed a key limitation: modeling uncertainty with symmetric bounds ($E \pm \sigma$) ignored tail risk. Additionally, the lack of real-world latency SLOs and regional grid bias in the simulation motivated my exploration of Bayesian scheduling formulations.*
 
-#### 2. [Distributed Hybrid AI Code Reviewer](https://github.com/Shalini180/ai-code-reviewer)
-* **Research Problem:** Automated code review suffers from a precision/recall trade-off. Static tools have high recall but high noise; LLMs have high semantic understanding but hallucinate (epistemic uncertainty).
-* **Uncertainty Mechanism:** Implemented a **Hybrid Fusion** engine. Static analysis results are injected into the LLM's context window as "ground truth" priors, forcing the model to act as a verifier rather than a generator.
-* **Systems Complexity:**
-    * **Architecture:** Event-driven, non-blocking pipeline using Redis for state management and deduplication of high-throughput GitHub webhooks.
-    * **Fault Tolerance:** Designed graceful degradation paths—if the LLM API times out, the system falls back to static-only mode without crashing the worker.
-* **Evaluation:** Benchmarked against raw Semgrep on **internal historical pull requests**, observing a **consistent reduction** in False Positive Rate (FPR) by filtering syntax-correct but logically irrelevant warnings.
-
-#### 3. [Explainable Misinformation Detection](https://github.com/Shalini180/fake-news-detection)
-* **Research Problem:** Black-box NLP models lack calibration and external context verification.
-* **Uncertainty Mechanism:** Combined **Semantic Embeddings** (RoBERTa) with **Graph-based Credibility Scores** to weight predictions based on source history.
-* **Evaluation:** Achieved **0.89 F1 Score** (vs. 0.75 Baseline LSTM). Improved model calibration on **out-of-distribution news articles** by heavily weighting domain credibility over text features.
+#### 2. [Event-Driven Hybrid AI Code Reviewer](https://github.com/Shalini180/ai-code-reviewer)
+* **Objective:** To mitigate the "precision vs. recall" trade-off in automated code review using a hybrid approach.
+* **Mechanism:** Fused deterministic static analysis with semantic analysis. Static findings are injected into the LLM prompt as **structured context**, constraining the model to a verification task to reduce hallucination.
+* **Engineering Trade-off:** *Latency was the primary bottleneck. I implemented a fail-open mechanism where the worker degrades to static-only mode if inference exceeds 500ms. A remaining limitation is the potential for false negatives, as the system relies on static analysis to trigger the LLM review.*
 
 ---
 
-### 🛠️ Technical Stack
-* **Probabilistic Modeling:** Python, PyTorch (Transformer fine-tuning, statistical profiling), Scikit-learn.
-* **Systems Infrastructure:** C++ (Performance-critical components), Redis (Distributed locking, Queues), Docker (Containerization).
-* **Distributed Computing:** Celery (Async task orchestration), AWS (Cloud deployment), DuckDB (Embedded OLAP).
-* **Hardware Interface:** Intel RAPL (Energy measurement), Linux Powercap.
+### 🔭 Current Research Questions
+*I am actively thinking about:*
+1.  How can schedulers be formally modeled to account for **asymmetric risk and tail events** without sacrificing throughput?
+2.  How should probabilistic model outputs be integrated into **reliability-critical developer tools** without violating safety or latency constraints?
 
 ---
 
-### 🔭 Open Research Questions
-*I am currently exploring how my work on uncertainty extends to broader systems:*
-* **Risk-Aware Autoscaling:** Can we use the prediction intervals from my carbon scheduler to better predict request arrival bursts and prevent cold-start latency?
-* **Consensus in Noisy Systems:** How do distributed consensus algorithms (like Raft) behave when leader election relies on probabilistic health checks rather than binary heartbeats?
+### 🏆 Engineering Validation (Selected Work Under Constraints)
+*Applied engineering projects validating system design skills.*
+
+**Blockchain-Based P2P Payment Settlement (CryptRidez)**
+* **System Constraint:** Designed an idempotent smart contract layer to handle Ethereum transaction failures and reorgs without double-spending.
+* **Verification:** [Devfolio](https://devfolio.co/projects/cryptridez-0f47) · [GitHub](https://github.com/Shalini180/IEEECS-HackHub-2022)
+
+**IPL Score Prediction Pipeline**
+* **System Constraint:** Built a low-latency inference pipeline to serve predictions during match intervals in a hackathon setting.
+* **Verification:** [Official Article](https://chennai.vit.ac.in/vit-students-won-award-ibm-hack-challenge-2021/) · [GitHub](https://github.com/VaishnaviVV/IPL-Analytics-Prediction-IBMHC2021)
 
 ---
 
-### 📈 Industry Experience
-* **Amazon (Fire TV):** Debugged nondeterministic race conditions in OS boot sequences. Designed state-preservation checkpoints to mitigate crash variance across Android/Vega OS transitions, measurably improving boot reliability in production.
-* **Standard Chartered:** Engineered high-throughput financial pipelines. Optimized query paths in heterogeneous data systems to eliminate latency bottlenecks during peak trading load.
+### 🎓 Academic Highlights
+**B.Tech in Computer Science and Engineering**
+<br>*Vellore Institute of Technology (VIT) | 2019 – 2023*
+
+* **CGPA:** **9.19 / 10.0** (161 Credits)
+* **Capstone:** CSE1904 Capstone Project (Grade: **A**)
+
+**Relevant Coursework:**
+* **Systems:** Parallel & Distributed Computing (**A**), Operating Systems (**A**).
+* **Data & Math:** Machine Learning (**S**), Large Scale Data Processing (**S**), Applied Linear Algebra (**S**), Statistics for Engineers (**A**).
+*(Note: 'S' denotes Superior grade, the highest possible rating).*
+
+---
+
+### 💻 Concepts & Skills
+* **Systems Concepts:** Forecast-Aware Scheduling (Prototype-level), Backpressure-Aware Queueing, Event-Driven Architecture.
+* **Languages:** Python (Primary), C++ (Academic usage).
+* **Infrastructure:** Containerized Services, In-Memory Data Stores (Redis), Asynchronous Job Queues (Celery).
+* **Tooling:** Intel RAPL, Linux Powercap.
 
 ---
 *Connect with me on [LinkedIn](https://www.linkedin.com/in/shalini-annadurai/)*
