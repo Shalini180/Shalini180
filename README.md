@@ -1,17 +1,18 @@
 # Hi, I'm Shalini 👋
 
-### Backend Engineer · Systems & ML
-I am a Backend Engineer in fintech building high-reliability infrastructure.
+### Backend Engineer
+I am a Backend Software Engineer currently building high-reliability API infrastructure in the fintech domain.
 
-My work has shifted from building **deterministic systems** (that assume perfect inputs) to **robust systems** (that survive noisy ones). I am motivated by infrastructure that fails quietly: schedulers that trust bad forecasts and developer tools that surface hallucinations without verification.
+My work ensuring consistency in production systems has motivated my interest in **system robustness to variance**. I am exploring how to build infrastructure that dynamically adjusts to noisy inputs—using signals like forecast errors or code complexity to make better resource allocation decisions.
 
-My goal for graduate study is to formalize how distributed systems can quantify risk to make better resource allocation decisions under uncertainty.
+I use the self-directed projects below to pivot from engineering implementation to research experimentation.
 
 ---
 
 ### 📄 Academic Research (Foundational)
 **Learning-Based Adaptive Image Denoising**
 <br>*Undergraduate Capstone Thesis | Vellore Institute of Technology*
+<br>*Advisor: [Dr. Christy Jackson J](https://chennai.vit.ac.in/member/dr-christy-jackson-j/)*
 
 * **The Problem:** Traditional denoising applies a single algorithm globally. I investigated whether local image complexity could serve as a proxy for “uncertainty” when dynamically selecting filters.
 * **Methodology:**
@@ -30,7 +31,12 @@ My goal for graduate study is to formalize how distributed systems can quantify 
 * **Simulation Result:** In a **simulated replay** of ISO-NE grid traces (~200 synthetic jobs), the scheduler reduced estimated carbon footprint by **~15%** compared to a FIFO baseline.
 * **Research Insight:** *This architecture revealed a key limitation: modeling uncertainty with symmetric bounds ($E \pm \sigma$) ignored tail risk. Additionally, the lack of real-world latency SLOs and regional grid bias in the simulation motivated my exploration of Bayesian scheduling formulations.*
 
-#### 2. [Event-Driven Hybrid AI Code Reviewer](https://github.com/Shalini180/ai-code-reviewer)
+#### 2. [FactLens: Hybrid Uncertainty-Aware Fake News Detector](https://github.com/Shalini180/fake-news-detection)
+* **Objective:** To build an explainable detection system that quantifies model confidence using Bayesian approximation.
+* **Mechanism:** A hybrid microservice architecture (Java + Python). It fuses symbolic reasoning (custom Domain Trie + Knowledge Graph) with deep learning. Uncertainty is quantified via **Monte Carlo Dropout** (20 stochastic forward passes), generating a confidence interval rather than a single point estimate.
+* **Engineering Design:** *Decoupled the heavy ML inference (Python/FastAPI) from the business logic (Spring Boot) to allow independent scaling. Implemented a custom Trie data structure for O(L) domain reputation lookups to reduce latency.*
+
+#### 3. [Event-Driven Hybrid AI Code Reviewer](https://github.com/Shalini180/ai-code-reviewer)
 * **Objective:** To mitigate the "precision vs. recall" trade-off in automated code review using a hybrid approach.
 * **Mechanism:** Fused deterministic static analysis with semantic analysis. Static findings are injected into the LLM prompt as **structured context**, constraining the model to a verification task to reduce hallucination.
 * **Engineering Trade-off:** *Latency was the primary bottleneck. I implemented a fail-open mechanism where the worker degrades to static-only mode if inference exceeds 500ms. A remaining limitation is the potential for false negatives, as the system relies on static analysis to trigger the LLM review.*
@@ -67,6 +73,7 @@ My goal for graduate study is to formalize how distributed systems can quantify 
 **Relevant Coursework:**
 * **Systems:** Parallel & Distributed Computing (**A**), Operating Systems (**A**).
 * **Data & Math:** Machine Learning (**S**), Large Scale Data Processing (**S**), Applied Linear Algebra (**S**), Statistics for Engineers (**A**).
+
 *(Note: 'S' denotes Superior grade, the highest possible rating).*
 
 ---
@@ -74,7 +81,7 @@ My goal for graduate study is to formalize how distributed systems can quantify 
 ### 💻 Concepts & Skills
 * **Systems Concepts:** Forecast-Aware Scheduling (Prototype-level), Backpressure-Aware Queueing, Event-Driven Architecture.
 * **Languages:** Python (Primary), C++ (Academic usage).
-* **Infrastructure:** Containerized Services, In-Memory Data Stores (Redis), Asynchronous Job Queues (Celery).
+* **Infrastructure:** Microservices (Spring Boot/FastAPI), Docker, Redis, Celery.
 * **Tooling:** Intel RAPL, Linux Powercap.
 
 ---
